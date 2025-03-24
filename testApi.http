@@ -1,0 +1,7 @@
+GET http://localhost:8080/url-shortener
+
+###
+POST http://localhost:8080/url-shortener
+Content-Type: application/json
+
+{ "urlToShorten": "https://www.google.fr" }
