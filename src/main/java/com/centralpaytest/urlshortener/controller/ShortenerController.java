@@ -27,7 +27,20 @@ public class ShortenerController {
     }
 
     @GetMapping
-    public String getClassicFromShortenUrl(String url) {
-        return "the real URL";
+    public String getClassicFromShortenUrl(@RequestBody String url) throws RestException {
+        if (url.length() == 0) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "You should give a non empty string");
+        }
+
+        String retrievedUrl;
+        try {
+            retrievedUrl = shortenerService.getOriginalUrlFrom(url);
+        } catch (Exception e) {
+            throw new RestException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        if (retrievedUrl == null) {
+            throw new RestException(HttpStatus.NOT_FOUND, String.format("URL %s is not corresponding to a valid shorten URL", url));
+        }
+        return retrievedUrl;
     }
 }
