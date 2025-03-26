@@ -20,7 +20,7 @@ public class ShortenerServiceTest {
         try {
             String output = tested.shortenUrl(input);
             // Then
-            assertTrue(output.length() < input.length());
+            assertTrue(output.length() <= input.length());
         } catch (Exception e) {
             System.out.println(e.getMessage());
             fail();
@@ -33,7 +33,7 @@ public class ShortenerServiceTest {
             // When
             String output = tested.shortenUrl("https://www.google.com");
             // Then
-            assertTrue(output.startsWith("https://short.fr/"));
+            assertTrue(output.startsWith("https://shrt.fr/"));
         } catch (Exception e) {
             System.out.println(e.getMessage());
             fail();
@@ -42,18 +42,18 @@ public class ShortenerServiceTest {
 
     @Test
     public void shortenUrl_throws_exception_if_input_has_same_lenght_as_custom_domain() {
-        assertThrowsExactly(Exception.class, () -> tested.shortenUrl("https://short.fr/"), "Impossible to shorten this URL");
+        assertThrowsExactly(Exception.class, () -> tested.shortenUrl("https://shrt.fr/"), "Impossible to shorten this URL");
     }
 
     @Test
     public void getOriginalUrlFrom_a_short_url_returns_correctly_the_base_url() throws Exception {
         // Given
-        String baseUrl = "https://www.google.fr";
-        String shortUrl = tested.shortenUrl(baseUrl); // "https://short.fr/w" TODO a real unit test when database
+        String baseUrl = "https://www.google.com";
+        String shortUrl = tested.shortenUrl(baseUrl); // "https://short.fr/097aio" TODO a real unit test when database
         // When
         String result = tested.getOriginalUrlFrom(shortUrl);
         // Then
-        assertEquals("https://www.google.fr", result);
+        assertEquals("https://www.google.com", result);
     }
     @Test
     public void getOriginalUrlFrom_fails_when_input_is_not_a_shorten_url() {

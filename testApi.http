@@ -3,7 +3,7 @@ GET http://localhost:8080/url-shortener
 ###
 GET http://localhost:8080/url-shortener
 
-https://short.fr/w
+https://shrt.fr/097aio
 
 ### why does it work? json is implicly converted
 POST http://localhost:8080/url-shortener

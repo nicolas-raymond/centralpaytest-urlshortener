@@ -29,7 +29,7 @@ public class ShortenerControllerTest {
     }
     @Test
     public void post_with_our_domain_returns_specified_500() {
-        Response response = RestAssured.given().body("https://short.fr/").post(API_ROOT);
+        Response response = RestAssured.given().body("https://shrt.fr/").post(API_ROOT);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), response.getStatusCode());
         assertEquals("Impossible to shorten this URL", response.getBody().asString());
     }
@@ -52,17 +52,17 @@ public class ShortenerControllerTest {
     @Test
     public void get_with_a_fake_shorten_url_returns_404() {
         // When
-        Response response = RestAssured.given().body("https://short.fr/w").get(API_ROOT);
+        Response response = RestAssured.given().body("https://shrt.fr/w").get(API_ROOT);
         // Then
         assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode());
-        assertEquals("URL https://short.fr/w is not corresponding to a valid shorten URL", response.getBody().asString());
+        assertEquals("URL https://shrt.fr/w is not corresponding to a valid shorten URL", response.getBody().asString());
     }
     @Test
     public void get_with_a_shorten_url_returns_the_original_url() {
         // Given
-        RestAssured.given().body("https://www.google.com/").post(API_ROOT); // TODO use mocks instead of integration test?
+        RestAssured.given().body("https://www.google.com").post(API_ROOT); // TODO use mocks instead of integration test?
         // When
-        Response response = RestAssured.given().body("https://short.fr/w").get(API_ROOT);
+        Response response = RestAssured.given().body("https://shrt.fr/097aio").get(API_ROOT);
         // Then
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         assertEquals("https://www.google.com", response.getBody().asString());

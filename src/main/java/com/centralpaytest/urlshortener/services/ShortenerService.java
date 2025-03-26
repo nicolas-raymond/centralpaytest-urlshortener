@@ -8,14 +8,14 @@ import java.util.Map;
 
 @Service
 public class ShortenerService {
-    final String URL_STARTER = "https://short.fr/";
+    final String URL_STARTER = "https://shrt.fr/";
     Map<Integer, String> IDS_TO_RETRIEVE_URL = new HashMap<>(); // TODO replace by database
     StringEncoder stringEncoder;
 
     @Autowired
     ShortenerService(StringEncoder stringEncoder) {
         this.stringEncoder = stringEncoder;
-        IDS_TO_RETRIEVE_URL.put(URL_STARTER.length(), URL_STARTER);
+        IDS_TO_RETRIEVE_URL.put(Math.abs(URL_STARTER.hashCode()), URL_STARTER);  // hashCode can return a negative number due to int limit
     }
 
     /**
@@ -23,7 +23,8 @@ public class ShortenerService {
      * @return a string representing the input as a shorter string
      */
     public String shortenUrl(String longUrl) throws Exception {
-        int idUrl = longUrl.length(); // FIXME use length is a bad solution (better will be with unique database ID) hashCode?
+        // hashCode can return a negative number due to int limit
+        int idUrl = Math.abs(longUrl.hashCode()); // TODO better will be with unique database ID
         if (IDS_TO_RETRIEVE_URL.get(idUrl) == null) {
             IDS_TO_RETRIEVE_URL.put(idUrl, longUrl);
         } else {
