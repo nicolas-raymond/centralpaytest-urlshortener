@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ShortenerService {
@@ -40,5 +43,18 @@ public class ShortenerService {
         String toDecode = shortUrl.substring(URL_STARTER.length());
         int id = stringEncoder.decode(toDecode);
         return IDS_TO_RETRIEVE_URL.get(id);
+    }
+
+    /**
+     * @param url a url without any path (protocol + sub domain + domains)
+     * @return list of generated shorten url related to
+     */
+    public List<String> getShortenUrlsFromBase(String url) {
+        String toSearch = url != null && url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        List<Integer> idsToEncode = IDS_TO_RETRIEVE_URL.entrySet().stream()
+                .filter(entry -> entry.getValue().startsWith(toSearch))
+                .map(Map.Entry::getKey)
+                .collect(toList());
+        return idsToEncode.stream().map(id -> URL_STARTER.concat(stringEncoder.encode(id))).collect(toList());
     }
 }

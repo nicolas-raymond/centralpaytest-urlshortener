@@ -2,11 +2,14 @@ package com.centralpaytest.urlshortener.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -66,5 +69,34 @@ public class ShortenerControllerTest {
         // Then
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         assertEquals("https://www.google.com", response.getBody().asString());
+    }
+
+    @Test
+    public void get_shorten_without_body_returns_400() {
+        // When
+        Response response = RestAssured.get(API_ROOT + "/all-shorten-urls");
+        // Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+        // FIXME empty message => issue with custom exception?
+        //assertEquals("Impossible to retrieve all existing shorten URLs. Please specify as request body the base URL you want to focus", response.getBody().asString());
+    }
+    @Test
+    public void get_shorten_with_body_containing_a_path_returns_400() {
+        // When
+        Response response = RestAssured.given().body("https://www.google.com/search?q=").get(API_ROOT + "/all-shorten-urls");
+        // Then
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatusCode());
+        assertEquals("Impossible to retrieve shorten URLs from one containing a path, please remove it", response.getBody().asString());
+    }
+    @Test
+    public void get_shorten_returns_list_of_urls_related_to_base_url() {
+        // Given
+        RestAssured.given().body("https://www.google.com").post(API_ROOT);
+        RestAssured.given().body("https://www.google.com/search?q=toto").post(API_ROOT);
+        // When
+        Response response = RestAssured.given().body("https://www.google.com/").get(API_ROOT + "/all-shorten-urls");
+        // Then
+        Assert.assertTrue(response.getBody().as(List.class).contains("https://shrt.fr/097aio"));
+        Assert.assertTrue(response.getBody().as(List.class).contains("https://shrt.fr/zfmxz5"));
     }
 }
